@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# Dataset y archivos generados.
+data/UTKFace/*
+!data/UTKFace/.gitkeep
+models/*
+!models/.gitkeep
+reports/*
+!reports/.gitkeep

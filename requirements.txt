@@ -1,0 +1,4 @@
+# Dependencias necesarias para el punto 1.
+numpy
+pandas
+opencv-python
