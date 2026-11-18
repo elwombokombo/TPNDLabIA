@@ -18,25 +18,16 @@ import numpy as np
 import torch
 from matplotlib.widgets import Button
 
+from src.categories import age_to_class
 from src.model import CLASSES, MODEL_PATH, get_device, load_model, predict_logits
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "UTKFace"
 _AGE_RE = re.compile(r"^(\d+)_")
-# Límites de la consigna (ver README); categories.py todavía está pendiente.
-_AGE_BOUNDS = [(12, "child"), (25, "young"), (59, "adult")]
 
 COLOR_BAR = "#9aa5b1"
 COLOR_PRED = "#2f6fdd"
 COLOR_OK = "#2e8b57"
 COLOR_BAD = "#c0392b"
-
-
-def age_to_class(age: int) -> int:
-    """Índice de CLASSES para una edad real."""
-    for upper, name in _AGE_BOUNDS:
-        if age <= upper:
-            return CLASSES.index(name)
-    return CLASSES.index("senior")
 
 
 def list_faces(data_dir: Path) -> list[Path]:

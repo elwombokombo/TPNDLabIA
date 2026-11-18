@@ -1,8 +1,9 @@
-"""Punto 1: cargar las imágenes de UTKFace y sus edades."""
+"""Puntos 1 y 2: cargar UTKFace y crear las categorías de edad y género."""
 
 import argparse
 from pathlib import Path
 
+from src.categories import add_categories
 from src.dataset import load_dataset
 
 
@@ -22,9 +23,15 @@ def main() -> None:
     except (FileNotFoundError, NotADirectoryError, ValueError) as error:
         parser.exit(1, f"Error: {error}\n")
 
+    df = add_categories(df)
+
     print(f"Imágenes cargadas: {len(images)}")
     print(f"Dimensiones por imagen: {images[0].shape}")
     print(df.head().to_string(index=False))
+    print("\nImágenes por categoría de edad:")
+    print(df["age_group"].value_counts(sort=False).to_string())
+    print("\nImágenes por género:")
+    print(df["gender_group"].value_counts(sort=False, dropna=False).to_string())
 
 
 if __name__ == "__main__":
