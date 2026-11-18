@@ -16,7 +16,8 @@ TPNDLabIA/
 │   ├── categories.py        # Pendiente: categorías de edad.
 │   ├── preprocessing.py     # Pendiente: preparar datos.
 │   ├── model.py             # Implementado: MobileNetV2 (transfer learning) y entrenamiento.
-│   └── evaluation.py        # Implementado: métricas, gráficos y predicciones de ejemplo.
+│   ├── evaluation.py        # Implementado: métricas, gráficos y predicciones de ejemplo.
+│   └── viewer.py            # Implementado: ventana interactiva con la cara y la predicción.
 ├── models/                 # Reservado para modelos entrenados.
 └── reports/                # Reservado para resultados y gráficos.
 ```
@@ -58,6 +59,16 @@ La función `load_dataset` de `src/dataset.py` devuelve:
 - `df`: un DataFrame de pandas con la columna `age`, alineada con la lista de imágenes.
 
 La carga recorre los archivos en orden, extrae la edad del nombre y omite imágenes ilegibles o nombres sin una edad válida, mostrando un aviso. No recorre subcarpetas. Si la carpeta no existe o no contiene imágenes válidas, muestra un error. Los datos se conservan en memoria durante la ejecución.
+
+## Visor del modelo
+
+Abre una ventana con una cara de UTKFace, su edad real y las probabilidades que predice el modelo para cada categoría (barra azul = categoría predicha, "← real" = categoría real). Requiere `models/model.pt` entrenado.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.viewer
+```
+
+Botones **Anterior / Siguiente / Aleatoria**, o teclas ← → y `r`. Opciones: `--model`, `--data` y `--seed` (orden de las imágenes). Las imágenes se recorren de a una, sin cargar todo el dataset. Ojo: si el modelo se entrenó con parte de esas imágenes, también aparecerán las de entrenamiento.
 
 ## Etapas pendientes
 
