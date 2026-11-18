@@ -16,6 +16,13 @@ def main() -> None:
         default=Path(__file__).resolve().parent / "data" / "UTKFace",
         help="Carpeta de imágenes (por defecto: data/UTKFace).",
     )
+    parser.add_argument(
+        "--train",
+        action="store_true",
+        help="Entrena el modelo, lo evalúa y guarda gráficos y predicciones en reports/.",
+    )
+    parser.add_argument("--epochs", type=int, default=5, help="Épocas con el backbone congelado.")
+    parser.add_argument("--finetune-epochs", type=int, default=3, help="Épocas de fine-tuning.")
     args = parser.parse_args()
 
     try:
@@ -32,6 +39,30 @@ def main() -> None:
     print(df["age_group"].value_counts(sort=False).to_string())
     print("\nImágenes por género:")
     print(df["gender_group"].value_counts(sort=False, dropna=False).to_string())
+
+    if args.train:
+        train_and_evaluate(images, df, args.epochs, args.finetune_epochs)
+
+
+def train_and_evaluate(images, df, epochs: int, finetune_epochs: int) -> None:
+    """Entrena, evalúa y guarda curvas, matriz de confusión y predicciones de ejemplo."""
+    # Imports acá para que correr main.py sin --train no requiera torch.
+    from src.evaluation import evaluate, plot_training, predict_examples
+    from src.model import get_device, save_model, train_model
+    from src.preprocessing import prepare_data
+
+    device = get_device()
+    (x_train, y_train), (x_val, y_val), (x_test, y_test) = prepare_data(images, df)
+    print(f"\nTrain/val/test: {len(x_train)}/{len(x_val)}/{len(x_test)}  (dispositivo: {device})")
+
+    model, history = train_model(
+        x_train, y_train, x_val, y_val, epochs=epochs, finetune_epochs=finetune_epochs, device=device
+    )
+    print(f"Modelo guardado en {save_model(model)}")
+
+    _, cm = evaluate(model, x_test, y_test, device)
+    print(f"Gráficos guardados en {plot_training(history, cm)}")
+    print(f"Predicciones de ejemplo en {predict_examples(model, x_test, y_test, device)}")
 
 
 if __name__ == "__main__":

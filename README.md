@@ -1,6 +1,6 @@
 # Predicción de rango etario
 
-Proyecto en Python 3.10+ para clasificar rostros por rango de edad. Están implementadas la carga del dataset, las categorías de edad y género, el modelo, la evaluación y el visor; falta la preparación de datos (`src/preprocessing.py`).
+Proyecto en Python 3.10+ para clasificar rostros por rango de edad. Están implementadas la carga del dataset, las categorías de edad y género, el modelo, la evaluación y el visor; la preparación de datos queda como división estratificada train/val/test.
 
 ## Estructura
 
@@ -14,7 +14,7 @@ TPNDLabIA/
 │   ├── __init__.py
 │   ├── dataset.py           # Implementado: imágenes, edades y géneros.
 │   ├── categories.py        # Implementado: categorías de edad y género.
-│   ├── preprocessing.py     # Pendiente: preparar datos.
+│   ├── preprocessing.py     # Implementado: BGR→RGB, etiquetas y división train/val/test.
 │   ├── model.py             # Implementado: MobileNetV2 (transfer learning) y entrenamiento.
 │   ├── evaluation.py        # Implementado: métricas, gráficos y predicciones de ejemplo.
 │   └── viewer.py            # Implementado: ventana interactiva con la cara y la predicción.
@@ -87,6 +87,10 @@ Abre una ventana con una cara de UTKFace, su edad real y las probabilidades que 
 
 Botones **Anterior / Siguiente / Aleatoria**, o teclas ← → y `r`. Opciones: `--model`, `--data` y `--seed` (orden de las imágenes). Las imágenes se recorren de a una, sin cargar todo el dataset. Ojo: si el modelo se entrenó con parte de esas imágenes, también aparecerán las de entrenamiento.
 
-## Etapas pendientes
+## Entrenar y evaluar
 
-Queda pendiente `src/preprocessing.py`: normalización, codificación de etiquetas y división de datos.
+```powershell
+.\.venv\Scripts\python.exe main.py --train
+```
+
+Divide el dataset (70/15/15, estratificado por categoría de edad), entrena en dos fases (`--epochs`, `--finetune-epochs`), guarda `models/model.pt` y escribe en `reports/`: `report.txt` (métricas y matriz de confusión), `training.png` (curvas de accuracy y loss, y matriz de confusión) y `predictions.png` (predicciones de ejemplo sobre test, verde = acierto).
