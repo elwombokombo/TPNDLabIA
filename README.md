@@ -15,8 +15,8 @@ TPNDLabIA/
 │   ├── dataset.py           # Implementado: imágenes y edades.
 │   ├── categories.py        # Pendiente: categorías de edad.
 │   ├── preprocessing.py     # Pendiente: preparar datos.
-│   ├── model.py             # Pendiente: modelo y entrenamiento.
-│   └── evaluation.py        # Pendiente: evaluación y visualización.
+│   ├── model.py             # Implementado: MobileNetV2 (transfer learning) y entrenamiento.
+│   └── evaluation.py        # Implementado: métricas, gráficos y predicciones de ejemplo.
 ├── models/                 # Reservado para modelos entrenados.
 └── reports/                # Reservado para resultados y gráficos.
 ```

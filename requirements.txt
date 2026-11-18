@@ -1,4 +1,9 @@
-# Dependencias necesarias para el punto 1.
+# Punto 1: carga del dataset.
 numpy
 pandas
 opencv-python
+# Modelo base (transfer learning) y evaluación.
+torch
+torchvision
+scikit-learn
+matplotlib
