@@ -1,6 +1,9 @@
 """Puntos 1 y 2: cargar UTKFace y crear las categorías de edad y género."""
 
 import argparse
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 from src.categories import add_categories
@@ -21,6 +24,7 @@ def main() -> None:
         action="store_true",
         help="Entrena el modelo, lo evalúa y guarda gráficos y predicciones en reports/.",
     )
+    parser.add_argument("--no-show", action="store_true", help="No abrir los gráficos al terminar.")
     parser.add_argument("--epochs", type=int, default=5, help="Épocas con el backbone congelado.")
     parser.add_argument("--finetune-epochs", type=int, default=3, help="Épocas de fine-tuning.")
     args = parser.parse_args()
@@ -41,10 +45,18 @@ def main() -> None:
     print(df["gender_group"].value_counts(sort=False, dropna=False).to_string())
 
     if args.train:
-        train_and_evaluate(images, df, args.epochs, args.finetune_epochs)
+        train_and_evaluate(images, df, args.epochs, args.finetune_epochs, not args.no_show)
 
 
-def train_and_evaluate(images, df, epochs: int, finetune_epochs: int) -> None:
+def open_file(path) -> None:
+    """Abre un archivo con el visor predeterminado del sistema."""
+    if sys.platform == "win32":
+        os.startfile(path)
+    else:
+        subprocess.run(["open" if sys.platform == "darwin" else "xdg-open", str(path)], check=False)
+
+
+def train_and_evaluate(images, df, epochs: int, finetune_epochs: int, show: bool = True) -> None:
     """Entrena, evalúa y guarda curvas, matriz de confusión y predicciones de ejemplo."""
     # Imports acá para que correr main.py sin --train no requiera torch.
     from src.evaluation import evaluate, plot_training, predict_examples
@@ -61,8 +73,11 @@ def train_and_evaluate(images, df, epochs: int, finetune_epochs: int) -> None:
     print(f"Modelo guardado en {save_model(model)}")
 
     _, cm = evaluate(model, x_test, y_test, device)
-    print(f"Gráficos guardados en {plot_training(history, cm)}")
-    print(f"Predicciones de ejemplo en {predict_examples(model, x_test, y_test, device)}")
+    plots = [plot_training(history, cm), predict_examples(model, x_test, y_test, device)]
+    print("Gráficos guardados en:", *plots, sep="\n  ")
+    if show:
+        for plot in plots:
+            open_file(plot)
 
 
 if __name__ == "__main__":
